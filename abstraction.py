@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+
+
 class Product(ABC):
 
     def __init__(self, product_id, name, price):
@@ -9,6 +11,7 @@ class Product(ABC):
     @abstractmethod
     def display_details(self):
         pass
+
 
 class PhysicalProduct(Product):
 
@@ -22,6 +25,7 @@ class PhysicalProduct(Product):
         print("Price:", self.price)
         print("Weight:", self.weight, "kg")
 
+
 class DigitalProduct(Product):
 
     def __init__(self, product_id, name, price, file_size):
@@ -33,6 +37,7 @@ class DigitalProduct(Product):
         print("Name:", self.name)
         print("Price:", self.price)
         print("File Size:", self.file_size, "MB")
+
 
 class Customer:
 
@@ -51,6 +56,7 @@ class Customer:
         else:
             print("Invalid email or password!")
             return False
+
 
 class Cart:
 
@@ -77,7 +83,13 @@ class Cart:
             print("Cart is empty.")
         else:
             for product in self.products:
-                print(product.product_id, "-", product.name, "-", product.price)
+                print(
+                    product.product_id,
+                    "-",
+                    product.name,
+                    "-",
+                    product.price
+                )
 
     def calculate_total(self):
         total = 0
@@ -87,11 +99,13 @@ class Cart:
 
         return total
 
+
 class Payment(ABC):
 
     @abstractmethod
     def process(self, amount):
         pass
+
 
 class CreditCardPayment(Payment):
 
@@ -99,11 +113,13 @@ class CreditCardPayment(Payment):
         print("Processing Credit Card payment...")
         print("Payment of ₹", amount, "successful!")
 
+
 class PayPalPayment(Payment):
 
     def process(self, amount):
         print("Processing PayPal payment...")
         print("Payment of ₹", amount, "successful!")
+
 
 class Order:
 
@@ -131,12 +147,14 @@ class Order:
         print("Customer Email:", self.customer.email)
 
         print("\nProducts:")
+
         for product in self.cart.products:
             print("-", product.name, "₹", product.price)
 
         print("\nTotal Amount: ₹", self.cart.calculate_total())
         print("Order Status:", self.status)
         print("===================================")
+
 
 class Admin:
 
@@ -147,11 +165,14 @@ class Admin:
         catalog.append(product)
         print(product.name, "added to catalog.")
 
-    def update_product(self, catalog, product_id, new_price):
+    def update_product(self, catalog, product_id, new_name, new_price):
         for product in catalog:
             if product.product_id == product_id:
+                product.name = new_name
                 product.price = new_price
-                print(product.name, "price updated to ₹", new_price)
+                print("Product updated successfully.")
+                print("New Name:", product.name)
+                print("New Price:", product.price)
                 return
 
         print("Product not found.")
@@ -171,13 +192,10 @@ class Main:
     @staticmethod
     def run():
 
-        # Shared product catalog
         catalog = []
 
-        # Create Admin
         admin = Admin("Admin")
 
-        # Create Products
         laptop = PhysicalProduct(
             101,
             "Laptop",
@@ -199,22 +217,40 @@ class Main:
             1500
         )
 
-        print("\n--- PRODUCT CATALOG ---")
+        mouse = PhysicalProduct(
+            104,
+            "Mouse",
+            1000,
+            0.2
+        )
+
+        print("\n--- ADDING PRODUCTS TO CATALOG ---")
 
         admin.add_product(catalog, laptop)
         admin.add_product(catalog, headphones)
         admin.add_product(catalog, python_course)
+        admin.add_product(catalog, mouse)
 
-        # Display catalog
         print("\nCatalog Products:")
 
         for product in catalog:
             product.display_details()
             print("--------------------")
 
-        admin.update_product(catalog, 102, 1800)
+        print("\n--- UPDATING PRODUCT ---")
 
-        print("\n--- CUSTOMER ---")
+        admin.update_product(
+            catalog,
+            102,
+            "Wireless Headphones",
+            2500
+        )
+
+        print("\n--- DELETING PRODUCT ---")
+
+        admin.delete_product(catalog, 104)
+
+        print("\n--- CUSTOMER REGISTRATION ---")
 
         customer = Customer(
             "Gowthami",
@@ -224,7 +260,8 @@ class Main:
 
         customer.register()
 
-        # Login
+        print("\n--- CUSTOMER LOGIN ---")
+
         customer.login(
             "gowthami@gmail.com",
             "12345"
@@ -232,31 +269,31 @@ class Main:
 
         cart = Cart()
 
-        # Add products
+        print("\n--- ADDING PRODUCTS TO CART ---")
+
         cart.add_product(laptop)
         cart.add_product(headphones)
         cart.add_product(python_course)
 
-        # List cart
         cart.list_items()
+
+        print("\n--- REMOVING PRODUCT FROM CART ---")
 
         cart.remove_product(102)
 
-        # Display cart again
         cart.list_items()
 
-        # Calculate Total
-   
+        print("\n--- CALCULATING CART TOTAL ---")
+
         total = cart.calculate_total()
 
-        print("\nCart Total: ₹", total)
+        print("Cart Total: ₹", total)
 
-        # Payment
-    
+        print("\n--- SELECTING PAYMENT METHOD ---")
+
         payment = CreditCardPayment()
 
-
-        # Create Order
+        print("\n--- CREATING ORDER ---")
 
         order = Order(
             customer,
@@ -264,13 +301,13 @@ class Main:
             payment
         )
 
-        # Place order
+        print("\n--- PLACING ORDER ---")
+
         order.place_order()
 
-        # Display order
+        print("\n--- COMPLETED ORDER DETAILS ---")
+
         order.display_order_details()
 
 
-
-# Program Execution
 Main.run()
